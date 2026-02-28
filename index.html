@@ -8,7 +8,7 @@
     body {
       margin: 0;
       height: 100vh;
-      background: #0f001a;
+      background: #06000a;
       color: #f0e8ff;
       font-family: system-ui, -apple-system, sans-serif;
       display: flex;
@@ -18,62 +18,81 @@
       overflow: hidden;
     }
 
+    /* Cinematic background glow */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at center, #1a0033 0%, #06000a 100%);
+      z-index: -1;
+    }
+
     h1 {
-      font-size: 4.8rem;
+      font-size: 4rem;
       margin: 0.4em 0 0.8em;
-      text-shadow: 0 0 30px #ff4da6;
+      text-shadow: 0 0 20px rgba(255, 77, 166, 0.5);
       letter-spacing: -1px;
       user-select: none;
+      text-align: center;
+      padding: 0 20px;
+      z-index: 5;
+      font-weight: 300;
     }
 
     #input-area {
       position: relative;
+      z-index: 5;
     }
 
     input {
-      font-size: 3.2rem;
-      padding: 0.4em 0.6em;
-      width: 380px;
+      font-size: 2.8rem;
+      padding: 0.5em 0.8em;
+      width: 400px;
       max-width: 85vw;
-      background: rgba(255,255,255,0.07);
-      border: 2px solid #66339944;
-      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
       color: #fff;
       text-align: center;
       outline: none;
-      transition: all 0.25s;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      backdrop-filter: blur(10px);
     }
 
     input:focus {
       border-color: #ff4da6;
-      box-shadow: 0 0 30px #ff4da688;
-      background: rgba(255,77,166,0.08);
+      box-shadow: 0 0 40px rgba(255, 77, 166, 0.3), inset 0 0 15px rgba(255, 77, 166, 0.1);
+      background: rgba(255, 77, 166, 0.05);
+      transform: translateY(-5px);
     }
 
     #response {
-      font-size: 6rem;
-      font-weight: bold;
-      margin: 1.2em 0 0.4em;
+      font-size: 5rem;
+      font-weight: 900;
+      margin: 1em 0;
       min-height: 1.2em;
       opacity: 0;
-      transition: opacity 0.4s;
+      transition: all 0.3s;
+      z-index: 5;
+      letter-spacing: 5px;
     }
 
     #response.show {
       opacity: 1;
+      transform: scale(1.1);
     }
 
     #love-message {
       position: fixed;
       inset: 0;
-      background: #0f001a;
+      background: #06000a;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 1.2s;
+      transition: opacity 1.5s ease;
       z-index: 10;
     }
 
@@ -82,139 +101,234 @@
       pointer-events: all;
     }
 
+    .text-container {
+      text-align: center;
+      margin-top: 1.5em;
+      animation: fadeIn 3s ease forwards;
+      opacity: 0;
+    }
+
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+
     #love-message h2 {
-      font-size: 5.5rem;
-      margin: 0 0 0.8em;
-      color: #ff4da6;
-      text-shadow: 0 0 40px #ff4da6, 0 0 80px #c71585;
-      animation: pulse 2.5s infinite ease-in-out;
+      font-size: 5rem;
+      margin: 0;
+      color: #fff;
+      text-shadow: 0 0 20px #ff4da6, 0 0 40px #ff4da6;
+      animation: pulse 3s infinite ease-in-out;
+      padding: 0 20px;
+      font-weight: 200;
+      letter-spacing: 2px;
+    }
+
+    #love-message h3 {
+      font-size: 1.2rem;
+      margin-top: 15px;
+      color: rgba(255, 255, 255, 0.6);
+      font-weight: 300;
+      letter-spacing: 2px;
+      /* removed uppercase and made smaller */
     }
 
     @keyframes pulse {
-      0%,100% { transform: scale(1); }
-      50%     { transform: scale(1.08); }
+      0%, 100% { transform: scale(1); opacity: 0.9; }
+      50%      { transform: scale(1.05); opacity: 1; }
     }
 
-    .heart {
-      position: absolute;
-      width: 120px;
-      height: 110px;
-      transform: translate(-50%, -50%);
+    /* Fancier Heart SVG */
+    .heart-svg {
+      width: 320px;
+      height: 320px;
+      filter: drop-shadow(0 0 30px rgba(255, 77, 166, 0.8));
+    }
+
+    .heart-path {
+      fill: none;
+      stroke: #ff4da6;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 1500;
+      stroke-dashoffset: 1500;
+    }
+
+    .show .heart-path {
+      animation: drawHeart 4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    @keyframes drawHeart {
+      0% { stroke-dashoffset: 1500; fill: rgba(255, 77, 166, 0); }
+      70% { stroke-dashoffset: 0; fill: rgba(255, 77, 166, 0); }
+      100% { stroke-dashoffset: 0; fill: rgba(255, 77, 166, 1); }
+    }
+
+    /* Starry Background (Hidden until reveal) */
+    .stars-container {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
       opacity: 0;
-      animation: heartAppear 2.8s forwards;
+      transition: opacity 3s ease;
     }
 
-    .heart::before,
-    .heart::after {
-      content: "";
+    .stars-container.visible {
+      opacity: 1;
+    }
+
+    .star-heart {
       position: absolute;
-      width: 120px;
-      height: 190px;
-      background: #ff4da6;
-      border-radius: 120px 120px 0 0;
-      transform-origin: bottom center;
+      color: #ff4da6;
+      opacity: 0;
+      animation: twinkle var(--duration) ease-in-out infinite;
+      animation-delay: var(--delay);
+      font-size: var(--size);
+      filter: blur(0.5px);
     }
 
-    .heart::before {
-      transform: rotate(-45deg) translateX(50%);
-      box-shadow: 0 0 60px #ff4da6aa;
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.1; transform: scale(0.8) rotate(0deg); }
+      50% { opacity: 0.8; transform: scale(1.3) rotate(15deg); }
     }
 
-    .heart::after {
-      transform: rotate(45deg) translateX(-50%);
-      box-shadow: 0 0 60px #ff4da6aa;
-    }
-
-    @keyframes heartAppear {
-      0%   { transform: translate(-50%, -50%) scale(0.1) rotate(-30deg); opacity: 0; }
-      40%  { transform: translate(-50%, -50%) scale(1.4) rotate(20deg);  opacity: 1; }
-      60%  { transform: translate(-50%, -50%) scale(0.9) rotate(-10deg); }
-      80%  { transform: translate(-50%, -50%) scale(1.15) rotate(5deg);  }
-      100% { transform: translate(-50%, -50%) scale(1)   rotate(0deg);   opacity: 1; }
-    }
-
-    /* floating hearts background when success */
     .heart-bg {
       position: absolute;
       inset: 0;
       pointer-events: none;
       overflow: hidden;
       opacity: 0;
-      transition: opacity 1.5s 1s;
+      transition: opacity 2s 2s;
+      z-index: 2;
     }
 
     .heart-bg.show {
-      opacity: 0.6;
+      opacity: 1;
     }
 
     .float-heart {
       position: absolute;
-      font-size: 3rem;
-      color: #ff4da6;
+      font-size: 2.5rem;
+      filter: drop-shadow(0 0 10px #ff4da6);
       animation: floatUp linear forwards;
       user-select: none;
       pointer-events: none;
     }
 
     @keyframes floatUp {
-      to {
-        transform: translateY(-120vh) rotate(720deg);
-        opacity: 0;
-      }
+      0% { transform: translateY(10vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 2.2rem; }
+      #love-message h2 { font-size: 2.5rem; }
+      #love-message h3 { font-size: 0.9rem; }
+      #response { font-size: 3rem; }
+      input { font-size: 1.6rem; width: 280px; }
+      .heart-svg { width: 220px; height: 220px; }
     }
   </style>
 </head>
 <body>
 
+  <div class="stars-container" id="starsContainer"></div>
+
   <h1>Hi what's ur name?</h1>
 
   <div id="input-area">
-    <input type="text" id="nameInput" autocomplete="off" autofocus spellcheck="false"/>
+    <input type="text" id="nameInput" autocomplete="off" autofocus spellcheck="false" placeholder="Enter name..."/>
   </div>
 
   <div id="response"></div>
 
   <div id="love-message">
-    <div class="heart" style="left:50%; top:38%;"></div>
-    <h2>Vuk loves you Jasmine</h2>
+    <svg class="heart-svg" viewBox="0 0 200 200">
+      <path class="heart-path" d="M100,180c-15-15-80-60-80-105c0-25,20-45,45-45c15,0,30,10,35,25c5-15,20-25,35-25c25,0,45,20,45,45C180,120,115,165,100,180z" />
+    </svg>
+    <div class="text-container">
+      <h2>I love you Jasmine</h2>
+      <h3>from your husband Vuk</h3>
+    </div>
   </div>
 
   <div class="heart-bg" id="heartBg"></div>
 
   <script>
-    const input  = document.getElementById('nameInput');
-    const resp   = document.getElementById('response');
-    const love   = document.getElementById('love-message');
+    const input   = document.getElementById('nameInput');
+    const resp    = document.getElementById('response');
+    const love    = document.getElementById('love-message');
     const heartBg = document.getElementById('heartBg');
+    const starsContainer = document.getElementById('starsContainer');
 
-    input.addEventListener('input', () => {
+    // Create the background star-hearts
+    function createStars() {
+      const count = 150; // Increased count for better "starry" feel
+      for (let i = 0; i < count; i++) {
+        const star = document.createElement('div');
+        star.className = 'star-heart';
+        star.innerHTML = '❤';
+        star.style.setProperty('--delay', Math.random() * 10 + 's');
+        star.style.setProperty('--duration', (Math.random() * 4 + 3) + 's');
+        star.style.setProperty('--size', (Math.random() * 8 + 4) + 'px');
+        star.style.left = Math.random() * 100 + 'vw';
+        star.style.top = Math.random() * 100 + 'vh';
+        starsContainer.appendChild(star);
+      }
+    }
+    createStars();
+
+    function checkName() {
       const val = input.value.trim().toLowerCase();
-
+      
       if (val === '') {
         resp.classList.remove('show');
-        resp.textContent = '';
         return;
       }
 
       if (val === 'jasmine') {
-        // success path
         resp.classList.remove('show');
+        // Start the reveal
         setTimeout(() => {
           love.classList.add('show');
           heartBg.classList.add('show');
+          
+          // Now the starry hearts fade in with the main animation
+          starsContainer.classList.add('visible'); 
+          
           startFloatingHearts();
         }, 300);
       } else {
-        // wrong name
         resp.textContent = 'EW';
         resp.style.color = '#ff3366';
         resp.classList.add('show');
+        resp.style.animation = 'none';
+        resp.offsetHeight; // trigger reflow
+        resp.style.animation = 'shake 0.4s ease';
       }
-    });
+    }
 
-    input.addEventListener('keypress', e => {
+    const style = document.createElement('style');
+    style.innerHTML = `
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-10px); }
+        75% { transform: translateX(10px); }
+      }
+    `;
+    document.head.appendChild(style);
+
+    input.addEventListener('keydown', (e) => {
+      if (resp.classList.contains('show')) {
+        resp.classList.remove('show');
+      }
+
       if (e.key === 'Enter') {
         e.preventDefault();
+        checkName();
       }
     });
 
@@ -227,20 +341,23 @@
 
         const heart = document.createElement('div');
         heart.className = 'float-heart';
-        heart.textContent = '💗';
+        const types = ['💖', '💗', '💓', '🌸'];
+        heart.textContent = types[Math.floor(Math.random() * types.length)];
+        
         heart.style.left = Math.random() * 100 + 'vw';
-        heart.style.animationDuration = (Math.random() * 6 + 8) + 's';
-        heart.style.opacity = Math.random() * 0.5 + 0.4;
-        heart.style.fontSize = (Math.random() * 1.8 + 1.8) + 'rem';
+        heart.style.bottom = '-10vh';
+        heart.style.animationDuration = (Math.random() * 4 + 6) + 's';
+        heart.style.opacity = Math.random() * 0.5 + 0.5;
+        heart.style.fontSize = (Math.random() * 1.5 + 1.5) + 'rem';
 
         heartBg.appendChild(heart);
-
-        setTimeout(() => heart.remove(), 14000);
-      }, 420);
+        setTimeout(() => heart.remove(), 10000);
+      }, 300);
     }
 
-    // optional: refocus on load / click anywhere
-    document.addEventListener('click', () => input.focus());
+    document.addEventListener('click', () => {
+      if (!love.classList.contains('show')) input.focus();
+    });
     window.addEventListener('load', () => input.focus());
   </script>
 
